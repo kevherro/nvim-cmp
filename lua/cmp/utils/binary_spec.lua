@@ -1,4 +1,4 @@
-local binary = require('cmp.utils.binary')
+local binary = require 'cmp.utils.binary'
 
 describe('utils.binary', function()
   it('insort', function()

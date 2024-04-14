@@ -1,17 +1,17 @@
-local debug = require('cmp.utils.debug')
-local str = require('cmp.utils.str')
-local char = require('cmp.utils.char')
-local feedkeys = require('cmp.utils.feedkeys')
-local async = require('cmp.utils.async')
-local keymap = require('cmp.utils.keymap')
-local context = require('cmp.context')
-local source = require('cmp.source')
-local view = require('cmp.view')
-local misc = require('cmp.utils.misc')
-local config = require('cmp.config')
-local types = require('cmp.types')
-local api = require('cmp.utils.api')
-local event = require('cmp.utils.event')
+local debug = require 'cmp.utils.debug'
+local str = require 'cmp.utils.str'
+local char = require 'cmp.utils.char'
+local feedkeys = require 'cmp.utils.feedkeys'
+local async = require 'cmp.utils.async'
+local keymap = require 'cmp.utils.keymap'
+local context = require 'cmp.context'
+local source = require 'cmp.source'
+local view = require 'cmp.view'
+local misc = require 'cmp.utils.misc'
+local config = require 'cmp.config'
+local types = require 'cmp.types'
+local api = require 'cmp.utils.api'
+local event = require 'cmp.utils.event'
 
 ---@class cmp.Core
 ---@field public suspending boolean
@@ -31,7 +31,7 @@ core.new = function()
   self.view.event:on('keymap', function(...)
     self:on_keymap(...)
   end)
-  for _, event_name in ipairs({ 'complete_done', 'menu_opened', 'menu_closed' }) do
+  for _, event_name in ipairs { 'complete_done', 'menu_opened', 'menu_closed' } do
     self.view.event:on(event_name, function(evt)
       self.event:emit(event_name, evt)
     end)
@@ -117,7 +117,13 @@ core.on_keymap = function(self, keys, fallback)
   --Commit character. NOTE: This has a lot of cmp specific implementation to make more user-friendly.
   local chars = keymap.t(keys)
   local e = self.view:get_active_entry()
-  if e and vim.tbl_contains(config.get().confirmation.get_commit_characters(e:get_commit_characters()), chars) then
+  if
+    e
+    and vim.tbl_contains(
+      config.get().confirmation.get_commit_characters(e:get_commit_characters()),
+      chars
+    )
+  then
     local is_printable = char.is_printable(string.byte(chars, 1))
     self:confirm(e, {
       behavior = is_printable and 'insert' or 'replace',
@@ -125,7 +131,9 @@ core.on_keymap = function(self, keys, fallback)
     }, function()
       local ctx = self:get_context()
       local word = e:get_word()
-      if string.sub(ctx.cursor_before_line, -#word, ctx.cursor.col - 1) == word and is_printable then
+      if
+        string.sub(ctx.cursor_before_line, -#word, ctx.cursor.col - 1) == word and is_printable
+      then
         fallback()
       else
         self:reset()
@@ -155,15 +163,15 @@ core.on_change = function(self, trigger_event)
   ignore = ignore or (vim.fn.pumvisible() == 1 and (vim.v.completed_item).word)
   ignore = ignore or not self.view:ready()
   if ignore then
-    self:get_context({ reason = types.cmp.ContextReason.Auto })
+    self:get_context { reason = types.cmp.ContextReason.Auto }
     return
   end
   self:autoindent(trigger_event, function()
-    local ctx = self:get_context({ reason = types.cmp.ContextReason.Auto })
+    local ctx = self:get_context { reason = types.cmp.ContextReason.Auto }
     debug.log(('ctx: `%s`'):format(ctx.cursor_before_line))
     if ctx:changed(ctx.prev_context) then
       self.view:on_change()
-      debug.log('changed')
+      debug.log 'changed'
 
       if vim.tbl_contains(config.get().completion.autocomplete or {}, trigger_event) then
         self:complete(ctx)
@@ -172,7 +180,7 @@ core.on_change = function(self, trigger_event)
         self:filter()
       end
     else
-      debug.log('unchanged')
+      debug.log 'unchanged'
     end
   end)
 end
@@ -196,7 +204,7 @@ end
 ---@param line string
 ---@return string suffix
 local function find_line_suffix(line)
-  return line:match('%S*$') --[[@as string]]
+  return line:match '%S*$' --[[@as string]]
 end
 
 ---Check autoindent
@@ -235,19 +243,19 @@ core.complete_common_string = function(self)
     return false
   end
 
-  config.set_onetime({
+  config.set_onetime {
     sources = config.get().sources,
     matching = {
       disallow_prefix_unmatching = true,
       disallow_partial_matching = true,
       disallow_fuzzy_matching = true,
     },
-  })
+  }
 
   self:filter()
   self.filter:sync(1000)
 
-  config.set_onetime({})
+  config.set_onetime {}
 
   local cursor = api.get_cursor()
   local offset = self.view:get_offset() or cursor[2]
@@ -318,7 +326,9 @@ local async_filter = async.wrap(function(self)
 
   -- Check fetching sources.
   local sources = {}
-  for _, s in ipairs(self:get_sources({ source.SourceStatus.FETCHING, source.SourceStatus.COMPLETED })) do
+  for _, s in
+    ipairs(self:get_sources { source.SourceStatus.FETCHING, source.SourceStatus.COMPLETED })
+  do
     -- Reserve filter call for timeout.
     if not s.incomplete and config.get().performance.fetching_timeout > s:get_fetching_time() then
       self.filter.timeout = config.get().performance.fetching_timeout - s:get_fetching_time()
@@ -340,7 +350,7 @@ local async_filter = async.wrap(function(self)
 
   -- Check onetime config.
   if not did_open and fetching == 0 then
-    config.set_onetime({})
+    config.set_onetime {}
   end
 end)
 core.filter = async.throttle(async_filter, config.get().performance.throttle)
@@ -388,12 +398,19 @@ core.confirm = function(self, e, option, callback)
       table.insert(keys, string.sub(e.context.cursor_before_line, e:get_offset()))
       feedkeys.call(table.concat(keys, ''), 'in')
     else
-      vim.cmd([[silent! undojoin]])
+      vim.cmd [[silent! undojoin]]
       -- This logic must be used nvim_buf_set_text.
       -- If not used, the snippet engine's placeholder wil be broken.
-      vim.api.nvim_buf_set_text(0, e.context.cursor.row - 1, e:get_offset() - 1, ctx.cursor.row - 1, ctx.cursor.col - 1, {
-        e.context.cursor_before_line:sub(e:get_offset()),
-      })
+      vim.api.nvim_buf_set_text(
+        0,
+        e.context.cursor.row - 1,
+        e:get_offset() - 1,
+        ctx.cursor.row - 1,
+        ctx.cursor.col - 1,
+        {
+          e.context.cursor_before_line:sub(e:get_offset()),
+        }
+      )
       vim.api.nvim_win_set_cursor(0, { e.context.cursor.row, e.context.cursor.col - 1 })
     end
   end)
@@ -423,12 +440,16 @@ core.confirm = function(self, e, option, callback)
         if has_cursor_line_text_edit then
           return
         end
-        vim.cmd([[silent! undojoin]])
+        vim.cmd [[silent! undojoin]]
         vim.lsp.util.apply_text_edits(text_edits, ctx.bufnr, e.source:get_position_encoding_kind())
       end)
     else
-      vim.cmd([[silent! undojoin]])
-      vim.lsp.util.apply_text_edits(e:get_completion_item().additionalTextEdits, ctx.bufnr, e.source:get_position_encoding_kind())
+      vim.cmd [[silent! undojoin]]
+      vim.lsp.util.apply_text_edits(
+        e:get_completion_item().additionalTextEdits,
+        ctx.bufnr,
+        e.source:get_position_encoding_kind()
+      )
     end
   end)
   feedkeys.call('', 'n', function()
@@ -449,8 +470,10 @@ core.confirm = function(self, e, option, callback)
       completion_item.textEdit.range = e:get_insert_range()
     end
 
-    local diff_before = math.max(0, e.context.cursor.col - (completion_item.textEdit.range.start.character + 1))
-    local diff_after = math.max(0, (completion_item.textEdit.range['end'].character + 1) - e.context.cursor.col)
+    local diff_before =
+      math.max(0, e.context.cursor.col - (completion_item.textEdit.range.start.character + 1))
+    local diff_after =
+      math.max(0, (completion_item.textEdit.range['end'].character + 1) - e.context.cursor.col)
     local new_text = completion_item.textEdit.newText
     completion_item.textEdit.range.start.line = ctx.cursor.line
     completion_item.textEdit.range.start.character = (ctx.cursor.col - 1) - diff_before
@@ -459,7 +482,7 @@ core.confirm = function(self, e, option, callback)
     if api.is_insert_mode() then
       if false then
         --To use complex expansion debug.
-        vim.print({ -- luacheck: ignore
+        vim.print { -- luacheck: ignore
           item = e:get_completion_item(),
           diff_before = diff_before,
           diff_after = diff_after,
@@ -471,7 +494,7 @@ core.confirm = function(self, e, option, callback)
           original_range_end = e:get_completion_item().textEdit.range['end'].character,
           cursor_line = ctx.cursor_line,
           cursor_col0 = ctx.cursor.col - 1,
-        })
+        }
       end
       local is_snippet = completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
       if is_snippet then
@@ -482,18 +505,34 @@ core.confirm = function(self, e, option, callback)
       local texts = vim.split(completion_item.textEdit.newText, '\n')
       vim.api.nvim_win_set_cursor(0, {
         completion_item.textEdit.range.start.line + #texts,
-        (#texts == 1 and (completion_item.textEdit.range.start.character + #texts[1]) or #texts[#texts]),
+        (
+          #texts == 1 and (completion_item.textEdit.range.start.character + #texts[1])
+          or #texts[#texts]
+        ),
       })
       if is_snippet then
-        config.get().snippet.expand({
+        config.get().snippet.expand {
           body = new_text,
           insert_text_mode = completion_item.insertTextMode,
-        })
+        }
       end
     else
       local keys = {}
-      table.insert(keys, keymap.backspace(ctx.cursor_line:sub(completion_item.textEdit.range.start.character + 1, ctx.cursor.col - 1)))
-      table.insert(keys, keymap.delete(ctx.cursor_line:sub(ctx.cursor.col, completion_item.textEdit.range['end'].character)))
+      table.insert(
+        keys,
+        keymap.backspace(
+          ctx.cursor_line:sub(
+            completion_item.textEdit.range.start.character + 1,
+            ctx.cursor.col - 1
+          )
+        )
+      )
+      table.insert(
+        keys,
+        keymap.delete(
+          ctx.cursor_line:sub(ctx.cursor.col, completion_item.textEdit.range['end'].character)
+        )
+      )
       table.insert(keys, new_text)
       feedkeys.call(table.concat(keys, ''), 'in')
     end

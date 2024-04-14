@@ -1,4 +1,4 @@
-local async = require('cmp.utils.async')
+local async = require 'cmp.utils.async'
 
 describe('utils.async', function()
   it('throttle', function()

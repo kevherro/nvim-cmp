@@ -1,5 +1,5 @@
-local feedkeys = require('cmp.utils.feedkeys')
-local config = require('cmp.config')
+local feedkeys = require 'cmp.utils.feedkeys'
+local config = require 'cmp.config'
 
 local async = {}
 
@@ -256,7 +256,7 @@ end
 ---@param cb AsyncCallback
 function Async:await(cb)
   if not cb then
-    error('callback is required')
+    error 'callback is required'
   end
   if self.running then
     table.insert(self.callbacks, cb)
@@ -290,14 +290,14 @@ end
 -- This will yield when called from a coroutine
 function async.yield(...)
   if coroutine.running() == nil then
-    error('Trying to yield from a non-yieldable context')
+    error 'Trying to yield from a non-yieldable context'
     return ...
   end
   return coroutine.yield(...)
 end
 
 function async.abort()
-  return async.yield('abort')
+  return async.yield 'abort'
 end
 
 return async

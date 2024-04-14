@@ -1,6 +1,6 @@
-local spec = require('cmp.utils.spec')
+local spec = require 'cmp.utils.spec'
 
-local misc = require('cmp.utils.misc')
+local misc = require 'cmp.utils.misc'
 
 describe('misc', function()
   before_each(spec.before)

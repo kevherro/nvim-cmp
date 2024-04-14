@@ -1,5 +1,5 @@
-local types = require('cmp.types')
-local cache = require('cmp.utils.cache')
+local types = require 'cmp.types'
+local cache = require 'cmp.utils.cache'
 
 ---@type cmp.Comparator[]
 local compare = {}
@@ -147,7 +147,7 @@ compare.locality = setmetatable({
     local cursor_row = vim.api.nvim_win_get_cursor(win)[1] - 1
     local max = vim.api.nvim_buf_line_count(buf)
 
-    if self.lines_cache:get('buf') ~= buf then
+    if self.lines_cache:get 'buf' ~= buf then
       self.lines_cache:clear()
       self.lines_cache:set('buf', buf)
     end
@@ -238,7 +238,8 @@ compare.scopes = setmetatable({
         for _, definition in pairs(definitions) do
           if s <= definition.node:start() and definition.node:end_() <= e then
             if scope:id() == locals.containing_scope(definition.node, buf):id() then
-              local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
+              local get_node_text = vim.treesitter.get_node_text
+                or vim.treesitter.query.get_node_text
               local text = get_node_text(definition.node, buf) or ''
               if not self.scopes_map[text] then
                 self.scopes_map[text] = depth

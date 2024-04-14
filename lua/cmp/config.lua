@@ -1,8 +1,8 @@
-local mapping = require('cmp.config.mapping')
-local cache = require('cmp.utils.cache')
-local keymap = require('cmp.utils.keymap')
-local misc = require('cmp.utils.misc')
-local api = require('cmp.utils.api')
+local mapping = require 'cmp.config.mapping'
+local cache = require 'cmp.utils.cache'
+local keymap = require 'cmp.utils.keymap'
+local misc = require 'cmp.utils.misc'
+local api = require 'cmp.utils.api'
 
 ---@class cmp.Config
 ---@field public g cmp.ConfigSchema
@@ -12,7 +12,7 @@ local config = {}
 config.cache = cache.new()
 
 ---@type cmp.ConfigSchema
-config.global = require('cmp.config.default')()
+config.global = require 'cmp.config.default'()
 
 ---@type table<integer, cmp.ConfigSchema>
 config.buffers = {}

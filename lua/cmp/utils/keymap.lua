@@ -1,6 +1,6 @@
-local misc = require('cmp.utils.misc')
-local buffer = require('cmp.utils.buffer')
-local api = require('cmp.utils.api')
+local misc = require 'cmp.utils.misc'
+local buffer = require 'cmp.utils.buffer'
+local api = require 'cmp.utils.api'
 
 local keymap = {}
 
@@ -8,19 +8,21 @@ local keymap = {}
 ---@param keys string
 ---@return string
 keymap.t = function(keys)
-  return (string.gsub(keys, '(<[A-Za-z0-9\\%-%[%]%^@]->)', function(match)
-    return vim.api.nvim_eval(string.format([["\%s"]], match))
-  end))
+  return (
+    string.gsub(keys, '(<[A-Za-z0-9\\%-%[%]%^@]->)', function(match)
+      return vim.api.nvim_eval(string.format([["\%s"]], match))
+    end)
+  )
 end
 
 ---Normalize key sequence.
 ---@param keys string
 ---@return string
 keymap.normalize = function(keys)
-  local normalize_buf = buffer.ensure('cmp.util.keymap.normalize')
+  local normalize_buf = buffer.ensure 'cmp.util.keymap.normalize'
   vim.api.nvim_buf_set_keymap(normalize_buf, 't', keys, '<Plug>(cmp.utils.keymap.normalize)', {})
   for _, map in ipairs(vim.api.nvim_buf_get_keymap(normalize_buf, 't')) do
-    if keymap.t(map.rhs) == keymap.t('<Plug>(cmp.utils.keymap.normalize)') then
+    if keymap.t(map.rhs) == keymap.t '<Plug>(cmp.utils.keymap.normalize)' then
       vim.api.nvim_buf_del_keymap(normalize_buf, 't', keys)
       return map.lhs
     end
@@ -57,7 +59,7 @@ keymap.undobreak = function()
   if not api.is_insert_mode() then
     return ''
   end
-  return keymap.t('<C-g>u')
+  return keymap.t '<C-g>u'
 end
 
 ---Mode safe join undo
@@ -65,7 +67,7 @@ keymap.undojoin = function()
   if not api.is_insert_mode() then
     return ''
   end
-  return keymap.t('<C-g>U')
+  return keymap.t '<C-g>U'
 end
 
 ---Create backspace keys.
@@ -102,7 +104,10 @@ end
 ---@param expr? string
 ---@return string
 keymap.indentkeys = function(expr)
-  return string.format(keymap.t('<Cmd>set indentkeys=%s<CR>'), expr and vim.fn.escape(expr, '| \t\\') or '')
+  return string.format(
+    keymap.t '<Cmd>set indentkeys=%s<CR>',
+    expr and vim.fn.escape(expr, '| \t\\') or ''
+  )
 end
 
 ---Return two key sequence are equal or not.
@@ -259,7 +264,7 @@ keymap.set_map = function(bufnr, mode, lhs, rhs, opts)
   end
   opts.desc = 'cmp.utils.keymap.set_map'
 
-  if vim.fn.has('nvim-0.8') == 0 then
+  if vim.fn.has 'nvim-0.8' == 0 then
     opts.replace_keycodes = nil
   end
 

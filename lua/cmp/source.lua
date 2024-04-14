@@ -1,13 +1,13 @@
-local context = require('cmp.context')
-local config = require('cmp.config')
-local entry = require('cmp.entry')
-local debug = require('cmp.utils.debug')
-local misc = require('cmp.utils.misc')
-local cache = require('cmp.utils.cache')
-local types = require('cmp.types')
-local async = require('cmp.utils.async')
-local pattern = require('cmp.utils.pattern')
-local char = require('cmp.utils.char')
+local context = require 'cmp.context'
+local config = require 'cmp.config'
+local entry = require 'cmp.entry'
+local debug = require 'cmp.utils.debug'
+local misc = require 'cmp.utils.misc'
+local cache = require 'cmp.utils.cache'
+local types = require 'cmp.types'
+local async = require 'cmp.utils.async'
+local pattern = require 'cmp.utils.pattern'
+local char = require 'cmp.utils.char'
 
 ---@class cmp.Source
 ---@field public id integer
@@ -35,7 +35,7 @@ source.SourceStatus.COMPLETED = 3
 ---@return cmp.Source
 source.new = function(name, s)
   local self = setmetatable({}, { __index = source })
-  self.id = misc.id('cmp.source.new')
+  self.id = misc.id 'cmp.source.new'
   self.name = name
   self.source = s
   self.cache = cache.new()
@@ -91,7 +91,7 @@ source.get_entries = function(self, ctx)
   local target_entries = self.entries
 
   if not self.incomplete then
-    local prev = self.cache:get({ 'get_entries', tostring(self.revision) })
+    local prev = self.cache:get { 'get_entries', tostring(self.revision) }
     if prev and ctx.cursor.row == prev.ctx.cursor.row and self.offset == prev.offset then
       -- only use prev entries when cursor is moved forward.
       -- and the pattern offset is the same.
@@ -131,7 +131,10 @@ source.get_entries = function(self, ctx)
   end
 
   if not self.incomplete then
-    self.cache:set({ 'get_entries', tostring(self.revision) }, { entries = entries, ctx = ctx, offset = self.offset })
+    self.cache:set(
+      { 'get_entries', tostring(self.revision) },
+      { entries = entries, ctx = ctx, offset = self.offset }
+    )
   end
 
   return entries
@@ -141,7 +144,7 @@ end
 ---@return lsp.Range
 source.get_default_insert_range = function(self)
   if not self.context then
-    error('context is not initialized yet.')
+    error 'context is not initialized yet.'
   end
 
   return self.cache:ensure({ 'get_default_insert_range', tostring(self.revision) }, function()
@@ -162,11 +165,14 @@ end
 ---@return lsp.Range
 source.get_default_replace_range = function(self)
   if not self.context then
-    error('context is not initialized yet.')
+    error 'context is not initialized yet.'
   end
 
   return self.cache:ensure({ 'get_default_replace_range', tostring(self.revision) }, function()
-    local _, e = pattern.offset('^' .. '\\%(' .. self:get_keyword_pattern() .. '\\)', string.sub(self.context.cursor_line, self.offset))
+    local _, e = pattern.offset(
+      '^' .. '\\%(' .. self:get_keyword_pattern() .. '\\)',
+      string.sub(self.context.cursor_line, self.offset)
+    )
     return {
       start = {
         line = self.context.cursor.row - 1,
@@ -291,7 +297,11 @@ source.complete = function(self, ctx, callback)
     }
   elseif ctx:get_reason() ~= types.cmp.ContextReason.TriggerOnly then
     if offset < ctx.cursor.col and self:get_keyword_length() <= (ctx.cursor.col - offset) then
-      if self.incomplete and self.context.cursor.col ~= ctx.cursor.col and self.status ~= source.SourceStatus.FETCHING then
+      if
+        self.incomplete
+        and self.context.cursor.col ~= ctx.cursor.col
+        and self.status ~= source.SourceStatus.FETCHING
+      then
         completion_context = {
           triggerKind = types.lsp.CompletionTriggerKind.TriggerForIncompleteCompletions,
         }

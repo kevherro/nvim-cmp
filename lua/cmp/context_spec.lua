@@ -1,6 +1,6 @@
-local spec = require('cmp.utils.spec')
+local spec = require 'cmp.utils.spec'
 
-local context = require('cmp.context')
+local context = require 'cmp.context'
 
 describe('context', function()
   before_each(spec.before)
@@ -9,7 +9,7 @@ describe('context', function()
     it('middle of text', function()
       vim.fn.setline('1', 'function! s:name() abort')
       vim.bo.filetype = 'vim'
-      vim.fn.execute('normal! fm')
+      vim.fn.execute 'normal! fm'
       local ctx = context.new()
       assert.are.equal(ctx.filetype, 'vim')
       assert.are.equal(ctx.cursor.row, 1)
@@ -20,7 +20,7 @@ describe('context', function()
     it('tab indent', function()
       vim.fn.setline('1', '\t\tab')
       vim.bo.filetype = 'vim'
-      vim.fn.execute('normal! fb')
+      vim.fn.execute 'normal! fb'
       local ctx = context.new()
       assert.are.equal(ctx.filetype, 'vim')
       assert.are.equal(ctx.cursor.row, 1)

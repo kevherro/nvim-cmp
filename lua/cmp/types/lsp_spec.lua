@@ -1,5 +1,5 @@
-local spec = require('cmp.utils.spec')
-local lsp = require('cmp.types.lsp')
+local spec = require 'cmp.utils.spec'
+local lsp = require 'cmp.types.lsp'
 
 describe('types.lsp', function()
   before_each(spec.before)

@@ -1,12 +1,12 @@
-local event = require('cmp.utils.event')
-local autocmd = require('cmp.utils.autocmd')
-local feedkeys = require('cmp.utils.feedkeys')
-local config = require('cmp.config')
-local window = require('cmp.utils.window')
-local types = require('cmp.types')
-local keymap = require('cmp.utils.keymap')
-local misc = require('cmp.utils.misc')
-local api = require('cmp.utils.api')
+local event = require 'cmp.utils.event'
+local autocmd = require 'cmp.utils.autocmd'
+local feedkeys = require 'cmp.utils.feedkeys'
+local config = require 'cmp.config'
+local window = require 'cmp.utils.window'
+local types = require 'cmp.types'
+local keymap = require 'cmp.utils.keymap'
+local misc = require 'cmp.utils.misc'
+local api = require 'cmp.utils.api'
 
 ---@class cmp.CustomEntriesView
 ---@field private offset integer
@@ -16,7 +16,7 @@ local api = require('cmp.utils.api')
 ---@field public event cmp.Event
 local wildmenu_entries_view = {}
 
-wildmenu_entries_view.ns = vim.api.nvim_create_namespace('cmp.view.statusline_entries_view')
+wildmenu_entries_view.ns = vim.api.nvim_create_namespace 'cmp.view.statusline_entries_view'
 
 wildmenu_entries_view.new = function()
   local self = setmetatable({}, { __index = wildmenu_entries_view })
@@ -35,7 +35,10 @@ wildmenu_entries_view.new = function()
   self.entries_win:option('wrap', false)
   self.entries_win:option('scrolloff', 0)
   self.entries_win:option('sidescrolloff', 0)
-  self.entries_win:option('winhighlight', 'Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None')
+  self.entries_win:option(
+    'winhighlight',
+    'Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None'
+  )
   self.entries_win:buffer_option('tabstop', 1)
 
   autocmd.subscribe(
@@ -75,13 +78,19 @@ wildmenu_entries_view.new = function()
           end
 
           for _, m in ipairs(e.matches or {}) do
-            vim.api.nvim_buf_set_extmark(buf, wildmenu_entries_view.ns, 0, self.offsets[i] + m.word_match_start - 1, {
-              end_line = 0,
-              end_col = self.offsets[i] + m.word_match_end,
-              hl_group = m.fuzzy and 'CmpItemAbbrMatchFuzzy' or 'CmpItemAbbrMatch',
-              hl_mode = 'combine',
-              ephemeral = true,
-            })
+            vim.api.nvim_buf_set_extmark(
+              buf,
+              wildmenu_entries_view.ns,
+              0,
+              self.offsets[i] + m.word_match_start - 1,
+              {
+                end_line = 0,
+                end_col = self.offsets[i] + m.word_match_end,
+                hl_group = m.fuzzy and 'CmpItemAbbrMatchFuzzy' or 'CmpItemAbbrMatch',
+                hl_mode = 'combine',
+                ephemeral = true,
+              }
+            )
           end
         end
       end
@@ -124,7 +133,7 @@ wildmenu_entries_view.open = function(self, offset, entries)
     end
   end
 
-  self.entries_win:open({
+  self.entries_win:open {
     relative = 'editor',
     style = 'minimal',
     row = vim.o.lines - 2,
@@ -132,7 +141,7 @@ wildmenu_entries_view.open = function(self, offset, entries)
     width = vim.o.columns,
     height = 1,
     zindex = 1001,
-  })
+  }
   self:draw()
 
   if preselect > 0 and config.get().preselect == types.cmp.PreselectMode.Item then
@@ -163,7 +172,13 @@ wildmenu_entries_view.draw = function(self)
     offset = offset + view.abbr.bytes + #self:_get_separator()
   end
 
-  vim.api.nvim_buf_set_lines(entries_buf, 0, 1, false, { table.concat(texts, self:_get_separator()) })
+  vim.api.nvim_buf_set_lines(
+    entries_buf,
+    0,
+    1,
+    false,
+    { table.concat(texts, self:_get_separator()) }
+  )
   vim.api.nvim_buf_set_option(entries_buf, 'modified', false)
 
   vim.api.nvim_win_call(0, function()
@@ -244,16 +259,23 @@ wildmenu_entries_view._select = function(self, selected_index, option)
     if option.behavior == types.cmp.SelectBehavior.Insert then
       local cursor = api.get_cursor()
       local word = e:get_vim_item(self.offset).word
-      vim.api.nvim_feedkeys(keymap.backspace(string.sub(api.get_current_line(), self.offset, cursor[2])) .. word, 'int', true)
+      vim.api.nvim_feedkeys(
+        keymap.backspace(string.sub(api.get_current_line(), self.offset, cursor[2])) .. word,
+        'int',
+        true
+      )
     end
     vim.api.nvim_win_call(self.entries_win.win, function()
       local view = e:get_view(self.offset, self.entries_win:get_buffer())
-      vim.api.nvim_win_set_cursor(0, { 1, self.offsets[selected_index] + (is_next and view.abbr.bytes or 0) })
-      vim.cmd([[redraw!]]) -- Force refresh for vim.api.nvim_set_decoration_provider
+      vim.api.nvim_win_set_cursor(
+        0,
+        { 1, self.offsets[selected_index] + (is_next and view.abbr.bytes or 0) }
+      )
+      vim.cmd [[redraw!]] -- Force refresh for vim.api.nvim_set_decoration_provider
     end)
   end
 
-  self.event:emit('change')
+  self.event:emit 'change'
 end
 
 wildmenu_entries_view._get_separator = function()

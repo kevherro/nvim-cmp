@@ -1,30 +1,30 @@
-local char = require('cmp.utils.char')
+local char = require 'cmp.utils.char'
 
 local str = {}
 
 local INVALIDS = {}
-INVALIDS[string.byte("'")] = true
-INVALIDS[string.byte('"')] = true
-INVALIDS[string.byte('=')] = true
-INVALIDS[string.byte('$')] = true
-INVALIDS[string.byte('(')] = true
-INVALIDS[string.byte('[')] = true
-INVALIDS[string.byte('<')] = true
-INVALIDS[string.byte('{')] = true
-INVALIDS[string.byte(' ')] = true
-INVALIDS[string.byte('\t')] = true
-INVALIDS[string.byte('\n')] = true
-INVALIDS[string.byte('\r')] = true
+INVALIDS[string.byte "'"] = true
+INVALIDS[string.byte '"'] = true
+INVALIDS[string.byte '='] = true
+INVALIDS[string.byte '$'] = true
+INVALIDS[string.byte '('] = true
+INVALIDS[string.byte '['] = true
+INVALIDS[string.byte '<'] = true
+INVALIDS[string.byte '{'] = true
+INVALIDS[string.byte ' '] = true
+INVALIDS[string.byte '\t'] = true
+INVALIDS[string.byte '\n'] = true
+INVALIDS[string.byte '\r'] = true
 
-local NR_BYTE = string.byte('\n')
+local NR_BYTE = string.byte '\n'
 
 local PAIRS = {}
-PAIRS[string.byte('<')] = string.byte('>')
-PAIRS[string.byte('[')] = string.byte(']')
-PAIRS[string.byte('(')] = string.byte(')')
-PAIRS[string.byte('{')] = string.byte('}')
-PAIRS[string.byte('"')] = string.byte('"')
-PAIRS[string.byte("'")] = string.byte("'")
+PAIRS[string.byte '<'] = string.byte '>'
+PAIRS[string.byte '['] = string.byte ']'
+PAIRS[string.byte '('] = string.byte ')'
+PAIRS[string.byte '{'] = string.byte '}'
+PAIRS[string.byte '"'] = string.byte '"'
+PAIRS[string.byte "'"] = string.byte "'"
 
 ---Return if specified text has prefix or not
 ---@param text string

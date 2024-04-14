@@ -1,8 +1,8 @@
-local misc = require('cmp.utils.misc')
-local pattern = require('cmp.utils.pattern')
-local types = require('cmp.types')
-local cache = require('cmp.utils.cache')
-local api = require('cmp.utils.api')
+local misc = require 'cmp.utils.misc'
+local pattern = require 'cmp.utils.pattern'
+local types = require 'cmp.types'
+local cache = require 'cmp.utils.cache'
+local api = require 'cmp.utils.api'
 
 ---@class cmp.Context
 ---@field public id string
@@ -22,7 +22,7 @@ local context = {}
 ---Create new empty context
 ---@return cmp.Context
 context.empty = function()
-  local ctx = context.new({}) -- dirty hack to prevent recursive call `context.empty`.
+  local ctx = context.new {} -- dirty hack to prevent recursive call `context.empty`.
   ctx.bufnr = -1
   ctx.input = ''
   ctx.cursor = {}
@@ -39,7 +39,7 @@ context.new = function(prev_context, option)
   option = option or {}
 
   local self = setmetatable({}, { __index = context })
-  self.id = misc.id('cmp.context.new')
+  self.id = misc.id 'cmp.context.new'
   self.cache = cache.new()
   self.prev_context = prev_context or context.empty()
   self.option = option or { reason = types.cmp.ContextReason.None }
@@ -74,7 +74,8 @@ end
 ---@return integer
 context.get_offset = function(self, keyword_pattern)
   return self.cache:ensure({ 'get_offset', keyword_pattern, self.cursor_before_line }, function()
-    return pattern.offset([[\%(]] .. keyword_pattern .. [[\)\m$]], self.cursor_before_line) or self.cursor.col
+    return pattern.offset([[\%(]] .. keyword_pattern .. [[\)\m$]], self.cursor_before_line)
+      or self.cursor.col
   end)
 end
 

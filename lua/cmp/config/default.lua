@@ -1,5 +1,5 @@
-local compare = require('cmp.config.compare')
-local types = require('cmp.types')
+local compare = require 'cmp.config.compare'
+local types = require 'cmp.types'
 
 local WIDE_HEIGHT = 40
 
@@ -32,7 +32,7 @@ return function()
       expand = vim.snippet and function(args)
         vim.snippet.expand(args.body)
       end or function(_)
-        error('snippet engine is not configured.')
+        error 'snippet engine is not configured.'
       end,
     },
 

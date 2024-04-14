@@ -1,14 +1,14 @@
-local spec = require('cmp.utils.spec')
-local api = require('cmp.utils.api')
-local feedkeys = require('cmp.utils.feedkeys')
+local spec = require 'cmp.utils.spec'
+local api = require 'cmp.utils.api'
+local feedkeys = require 'cmp.utils.feedkeys'
 
-local keymap = require('cmp.utils.keymap')
+local keymap = require 'cmp.utils.keymap'
 
 describe('keymap', function()
   before_each(spec.before)
 
   it('t', function()
-    for _, key in ipairs({
+    for _, key in ipairs {
       '<F1>',
       '<C-a>',
       '<C-]>',
@@ -21,17 +21,23 @@ describe('keymap', function()
       '<Plug>(example)',
       '<C-r>="abc"<CR>',
       '<Cmd>normal! ==<CR>',
-    }) do
+    } do
       assert.are.equal(keymap.t(key), vim.api.nvim_replace_termcodes(key, true, true, true))
-      assert.are.equal(keymap.t(key .. key), vim.api.nvim_replace_termcodes(key .. key, true, true, true))
-      assert.are.equal(keymap.t(key .. key .. key), vim.api.nvim_replace_termcodes(key .. key .. key, true, true, true))
+      assert.are.equal(
+        keymap.t(key .. key),
+        vim.api.nvim_replace_termcodes(key .. key, true, true, true)
+      )
+      assert.are.equal(
+        keymap.t(key .. key .. key),
+        vim.api.nvim_replace_termcodes(key .. key .. key, true, true, true)
+      )
     end
   end)
 
   it('to_keymap', function()
-    assert.are.equal(keymap.to_keymap('\n'), '<CR>')
-    assert.are.equal(keymap.to_keymap('<CR>'), '<CR>')
-    assert.are.equal(keymap.to_keymap('|'), '<Bar>')
+    assert.are.equal(keymap.to_keymap '\n', '<CR>')
+    assert.are.equal(keymap.to_keymap '<CR>', '<CR>')
+    assert.are.equal(keymap.to_keymap '|', '<Bar>')
   end)
 
   describe('fallback', function()
@@ -75,7 +81,7 @@ describe('keymap', function()
       it('callback', function()
         vim.api.nvim_buf_set_keymap(0, 'i', '(', '', {
           callback = function()
-            vim.api.nvim_feedkeys('()' .. keymap.t('<Left>'), 'int', true)
+            vim.api.nvim_feedkeys('()' .. keymap.t '<Left>', 'int', true)
           end,
         })
         local fallback = keymap.fallback(0, 'i', keymap.get_map('i', '('))
@@ -90,7 +96,7 @@ describe('keymap', function()
           noremap = false,
           silent = true,
           callback = function()
-            return '()' .. keymap.t('<Left>')
+            return '()' .. keymap.t '<Left>'
           end,
         })
         local fallback = keymap.fallback(0, 'i', keymap.get_map('i', '('))
@@ -139,7 +145,7 @@ describe('keymap', function()
             noremap = false,
             silent = true,
             callback = function()
-              return keymap.t('()<Left>')
+              return keymap.t '()<Left>'
             end,
           })
           local fallback = keymap.fallback(0, 'i', keymap.get_map('i', '('))
@@ -158,15 +164,15 @@ describe('keymap', function()
       keymap.listen('i', '<c-n>', function(_, fallback)
         fallback()
       end)
-      vim.api.nvim_feedkeys(keymap.t('iaiueo<CR>a<C-n><C-n>'), 'tx', true)
+      vim.api.nvim_feedkeys(keymap.t 'iaiueo<CR>a<C-n><C-n>', 'tx', true)
       assert.are.same({ 'aiueo', 'aiueo' }, vim.api.nvim_buf_get_lines(0, 0, -1, true))
     end)
 
     it('#414', function()
       keymap.listen('i', '<M-j>', function()
-        vim.api.nvim_feedkeys(keymap.t('<C-n>'), 'int', true)
+        vim.api.nvim_feedkeys(keymap.t '<C-n>', 'int', true)
       end)
-      vim.api.nvim_feedkeys(keymap.t('iaiueo<CR>a<M-j><M-j>'), 'tx', true)
+      vim.api.nvim_feedkeys(keymap.t 'iaiueo<CR>a<M-j><M-j>', 'tx', true)
       assert.are.same({ 'aiueo', 'aiueo' }, vim.api.nvim_buf_get_lines(0, 0, -1, true))
     end)
 
@@ -180,7 +186,7 @@ describe('keymap', function()
       keymap.listen('i', '<CR>', function(_, fallback)
         fallback()
       end)
-      feedkeys.call(keymap.t('i<CR>'), 'tx')
+      feedkeys.call(keymap.t 'i<CR>', 'tx')
       assert.are.same({ '', 'recursive' }, vim.api.nvim_buf_get_lines(0, 0, -1, true))
     end)
   end)

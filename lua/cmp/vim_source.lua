@@ -1,4 +1,4 @@
-local misc = require('cmp.utils.misc')
+local misc = require 'cmp.utils.misc'
 
 local vim_source = {}
 
@@ -16,7 +16,7 @@ vim_source.to_callback = setmetatable({
   callbacks = {},
 }, {
   __call = function(self, callback)
-    local id = misc.id('cmp.vim_source.to_callback')
+    local id = misc.id 'cmp.vim_source.to_callback'
     self.callbacks[id] = function(...)
       callback(...)
       self.callbacks[id] = nil
@@ -43,7 +43,7 @@ vim_source.new = function(bridge_id, methods)
   for _, method in ipairs(methods) do
     self[method] = (function(m)
       return function(_, ...)
-        return vim.fn['cmp#_method'](bridge_id, m, vim_source.to_args({ ... }))
+        return vim.fn['cmp#_method'](bridge_id, m, vim_source.to_args { ... })
       end
     end)(method)
   end

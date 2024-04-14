@@ -1,12 +1,12 @@
-local context = require('cmp.context')
-local source = require('cmp.source')
-local types = require('cmp.types')
-local config = require('cmp.config')
+local context = require 'cmp.context'
+local source = require 'cmp.source'
+local types = require 'cmp.types'
+local config = require 'cmp.config'
 
 local spec = {}
 
 spec.before = function()
-  vim.cmd([[
+  vim.cmd [[
     bdelete!
     enew!
     imapclear
@@ -22,15 +22,22 @@ spec.before = function()
     setlocal noswapfile
     setlocal virtualedit=all
     setlocal completeopt=menu,menuone,noselect
-  ]])
-  config.set_global({
+  ]]
+  config.set_global {
     sources = {
       { name = 'spec' },
     },
     snippet = {
       expand = function(args)
         local ctx = context.new()
-        vim.api.nvim_buf_set_text(ctx.bufnr, ctx.cursor.row - 1, ctx.cursor.col - 1, ctx.cursor.row - 1, ctx.cursor.col - 1, vim.split(string.gsub(args.body, '%$0', ''), '\n'))
+        vim.api.nvim_buf_set_text(
+          ctx.bufnr,
+          ctx.cursor.row - 1,
+          ctx.cursor.col - 1,
+          ctx.cursor.row - 1,
+          ctx.cursor.col - 1,
+          vim.split(string.gsub(args.body, '%$0', ''), '\n')
+        )
         for i, t in ipairs(vim.split(args.body, '\n')) do
           local s = string.find(t, '$0', 1, true)
           if s then
@@ -44,7 +51,7 @@ spec.before = function()
         end
       end,
     },
-  })
+  }
   config.set_cmdline({
     sources = {
       { name = 'spec' },

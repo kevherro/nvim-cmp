@@ -1,4 +1,4 @@
-local api = require('cmp.utils.api')
+local api = require 'cmp.utils.api'
 
 local context = {}
 

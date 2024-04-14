@@ -1,5 +1,5 @@
-local keymap = require('cmp.utils.keymap')
-local misc = require('cmp.utils.misc')
+local keymap = require 'cmp.utils.keymap'
+local misc = require 'cmp.utils.misc'
 
 local feedkeys = {}
 
@@ -12,19 +12,31 @@ feedkeys.call = setmetatable({
 
     local queue = {}
     if #keys > 0 then
-      table.insert(queue, { keymap.t('<Cmd>setlocal lazyredraw<CR>'), 'n' })
-      table.insert(queue, { keymap.t('<Cmd>setlocal textwidth=0<CR>'), 'n' })
-      table.insert(queue, { keymap.t('<Cmd>setlocal backspace=2<CR>'), 'n' })
+      table.insert(queue, { keymap.t '<Cmd>setlocal lazyredraw<CR>', 'n' })
+      table.insert(queue, { keymap.t '<Cmd>setlocal textwidth=0<CR>', 'n' })
+      table.insert(queue, { keymap.t '<Cmd>setlocal backspace=2<CR>', 'n' })
       table.insert(queue, { keys, string.gsub(mode, '[itx]', ''), true })
-      table.insert(queue, { keymap.t('<Cmd>setlocal %slazyredraw<CR>'):format(vim.o.lazyredraw and '' or 'no'), 'n' })
-      table.insert(queue, { keymap.t('<Cmd>setlocal textwidth=%s<CR>'):format(vim.bo.textwidth or 0), 'n' })
-      table.insert(queue, { keymap.t('<Cmd>setlocal backspace=%s<CR>'):format(vim.go.backspace or 2), 'n' })
+      table.insert(
+        queue,
+        { keymap.t('<Cmd>setlocal %slazyredraw<CR>'):format(vim.o.lazyredraw and '' or 'no'), 'n' }
+      )
+      table.insert(
+        queue,
+        { keymap.t('<Cmd>setlocal textwidth=%s<CR>'):format(vim.bo.textwidth or 0), 'n' }
+      )
+      table.insert(
+        queue,
+        { keymap.t('<Cmd>setlocal backspace=%s<CR>'):format(vim.go.backspace or 2), 'n' }
+      )
     end
 
     if callback then
-      local id = misc.id('cmp.utils.feedkeys.call')
+      local id = misc.id 'cmp.utils.feedkeys.call'
       self.callbacks[id] = callback
-      table.insert(queue, { keymap.t('<Cmd>lua require"cmp.utils.feedkeys".run(%s)<CR>'):format(id), 'n', true })
+      table.insert(
+        queue,
+        { keymap.t('<Cmd>lua require"cmp.utils.feedkeys".run(%s)<CR>'):format(id), 'n', true }
+      )
     end
 
     if is_insert then

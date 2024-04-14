@@ -1,15 +1,18 @@
-local str = require('cmp.utils.str')
+local str = require 'cmp.utils.str'
 
 describe('utils.str', function()
   it('get_word', function()
-    assert.are.equal(str.get_word('print'), 'print')
-    assert.are.equal(str.get_word('$variable'), '$variable')
-    assert.are.equal(str.get_word('print()'), 'print')
-    assert.are.equal(str.get_word('["cmp#confirm"]'), '["cmp#confirm"]')
-    assert.are.equal(str.get_word('"devDependencies":', string.byte('"')), '"devDependencies')
-    assert.are.equal(str.get_word('"devDependencies": ${1},', string.byte('"')), '"devDependencies')
-    assert.are.equal(str.get_word('#[cfg(test)]'), '#[cfg(test)]')
-    assert.are.equal(str.get_word('import { GetStaticProps$1 } from "next";', nil, 9), 'import { GetStaticProps')
+    assert.are.equal(str.get_word 'print', 'print')
+    assert.are.equal(str.get_word '$variable', '$variable')
+    assert.are.equal(str.get_word 'print()', 'print')
+    assert.are.equal(str.get_word '["cmp#confirm"]', '["cmp#confirm"]')
+    assert.are.equal(str.get_word('"devDependencies":', string.byte '"'), '"devDependencies')
+    assert.are.equal(str.get_word('"devDependencies": ${1},', string.byte '"'), '"devDependencies')
+    assert.are.equal(str.get_word '#[cfg(test)]', '#[cfg(test)]')
+    assert.are.equal(
+      str.get_word('import { GetStaticProps$1 } from "next";', nil, 9),
+      'import { GetStaticProps'
+    )
   end)
 
   it('remove_suffix', function()

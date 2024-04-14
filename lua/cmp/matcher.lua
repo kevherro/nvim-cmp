@@ -1,4 +1,4 @@
-local char = require('cmp.utils.char')
+local char = require 'cmp.utils.char'
 
 local matcher = {}
 
@@ -131,7 +131,11 @@ matcher.match = function(input, word, option)
   end
 
   if #matches == 0 then
-    if not option.disallow_fuzzy_matching and not option.disallow_prefix_unmatching and not option.disallow_partial_fuzzy_matching then
+    if
+      not option.disallow_fuzzy_matching
+      and not option.disallow_prefix_unmatching
+      and not option.disallow_partial_fuzzy_matching
+    then
       if matcher.fuzzy(input, word, matches, option) then
         return 1, matches
       end
@@ -181,7 +185,12 @@ matcher.match = function(input, word, option)
     idx = idx + 1
     if s > 0 then
       s = s * (1 + m.strict_ratio)
-      s = s * (1 + math.max(0, matcher.WORD_BOUNDALY_ORDER_FACTOR - (m.index - offset)) / matcher.WORD_BOUNDALY_ORDER_FACTOR)
+      s = s
+        * (
+          1
+          + math.max(0, matcher.WORD_BOUNDALY_ORDER_FACTOR - (m.index - offset))
+            / matcher.WORD_BOUNDALY_ORDER_FACTOR
+        )
       score = score + s
     end
   end
@@ -212,7 +221,9 @@ matcher.fuzzy = function(input, word, matches, option)
     local word_offset = 0
     local word_index = char.get_next_semantic_index(word, curr_match.word_match_end)
     while word_offset + word_index < next_match.word_match_start and input_index <= #input do
-      if char.match(string.byte(word, word_index + word_offset), string.byte(input, input_index)) then
+      if
+        char.match(string.byte(word, word_index + word_offset), string.byte(input, input_index))
+      then
         input_index = input_index + 1
         word_offset = word_offset + 1
       else

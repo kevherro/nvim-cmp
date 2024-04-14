@@ -1,10 +1,10 @@
-local spec = require('cmp.utils.spec')
-local feedkeys = require('cmp.utils.feedkeys')
-local types = require('cmp.types')
-local core = require('cmp.core')
-local source = require('cmp.source')
-local keymap = require('cmp.utils.keymap')
-local api = require('cmp.utils.api')
+local spec = require 'cmp.utils.spec'
+local feedkeys = require 'cmp.utils.feedkeys'
+local types = require 'cmp.types'
+local core = require 'cmp.core'
+local source = require 'cmp.source'
+local keymap = require 'cmp.utils.keymap'
+local api = require 'cmp.utils.api'
 
 describe('cmp.core', function()
   describe('confirm', function()
@@ -22,12 +22,12 @@ describe('cmp.core', function()
           return option.position_encoding_kind or types.lsp.PositionEncodingKind.UTF16
         end,
         complete = function(_, _, callback)
-          callback({ completion_item })
+          callback { completion_item }
         end,
       })
       c:register_source(s)
       feedkeys.call(request, 'n', function()
-        c:complete(c:get_context({ reason = types.cmp.ContextReason.Manual }))
+        c:complete(c:get_context { reason = types.cmp.ContextReason.Manual })
         vim.wait(5000, function()
           return #c.sources[s.id].entries > 0
         end)
@@ -70,7 +70,7 @@ describe('cmp.core', function()
       end)
 
       it('textEdit', function()
-        local state = confirm(keymap.t('i***AEO***<Left><Left><Left><Left><Left>'), 'IU', {
+        local state = confirm(keymap.t 'i***AEO***<Left><Left><Left><Left><Left>', 'IU', {
           label = 'AIUEO',
           textEdit = {
             range = {
@@ -91,7 +91,7 @@ describe('cmp.core', function()
       end)
 
       it('#1552', function()
-        local state = confirm(keymap.t('ios.'), '', {
+        local state = confirm(keymap.t 'ios.', '', {
           filterText = 'IsPermission',
           insertTextFormat = 2,
           label = 'IsPermission',
@@ -124,7 +124,7 @@ describe('cmp.core', function()
       end)
 
       it('textEdit & snippet', function()
-        local state = confirm(keymap.t('i***AEO***<Left><Left><Left><Left><Left>'), 'IU', {
+        local state = confirm(keymap.t 'i***AEO***<Left><Left><Left><Left><Left>', 'IU', {
           label = 'AIUEO',
           insertTextFormat = types.lsp.InsertTextFormat.Snippet,
           textEdit = {
@@ -146,7 +146,7 @@ describe('cmp.core', function()
       end)
 
       local char = '🗿'
-      for _, case in ipairs({
+      for _, case in ipairs {
         {
           encoding = types.lsp.PositionEncodingKind.UTF8,
           char_size = #char,
@@ -159,29 +159,40 @@ describe('cmp.core', function()
           encoding = types.lsp.PositionEncodingKind.UTF32,
           char_size = select(1, vim.str_utfindex(char)),
         },
-      }) do
+      } do
         it('textEdit & multibyte: ' .. case.encoding, function()
-          local state = confirm(keymap.t('i%s:%s%s:%s<Left><Left><Left>'):format(char, char, char, char), char, {
-            label = char .. char .. char,
-            textEdit = {
-              range = {
-                start = {
-                  line = 0,
-                  character = case.char_size + #':',
+          local state = confirm(
+            keymap.t('i%s:%s%s:%s<Left><Left><Left>'):format(char, char, char, char),
+            char,
+            {
+              label = char .. char .. char,
+              textEdit = {
+                range = {
+                  start = {
+                    line = 0,
+                    character = case.char_size + #':',
+                  },
+                  ['end'] = {
+                    line = 0,
+                    character = case.char_size + #':' + case.char_size + case.char_size,
+                  },
                 },
-                ['end'] = {
-                  line = 0,
-                  character = case.char_size + #':' + case.char_size + case.char_size,
-                },
+                newText = char .. char .. char .. char .. char,
               },
-              newText = char .. char .. char .. char .. char,
             },
-          }, {
-            position_encoding_kind = case.encoding,
-          })
-          vim.print({ state = state, case = case })
-          assert.are.same(state.buffer, { ('%s:%s%s%s%s%s:%s'):format(char, char, char, char, char, char, char) })
-          assert.are.same(state.cursor, { 1, #('%s:%s%s%s%s%s'):format(char, char, char, char, char, char) })
+            {
+              position_encoding_kind = case.encoding,
+            }
+          )
+          vim.print { state = state, case = case }
+          assert.are.same(
+            state.buffer,
+            { ('%s:%s%s%s%s%s:%s'):format(char, char, char, char, char, char, char) }
+          )
+          assert.are.same(
+            state.cursor,
+            { 1, #('%s:%s%s%s%s%s'):format(char, char, char, char, char, char) }
+          )
         end)
       end
     end)
@@ -207,7 +218,7 @@ describe('cmp.core', function()
       end)
 
       it('textEdit', function()
-        local state = confirm(keymap.t(':***AEO***<Left><Left><Left><Left><Left>'), 'IU', {
+        local state = confirm(keymap.t ':***AEO***<Left><Left><Left><Left><Left>', 'IU', {
           label = 'AIUEO',
           textEdit = {
             range = {

@@ -1,10 +1,10 @@
-local event = require('cmp.utils.event')
-local autocmd = require('cmp.utils.autocmd')
-local keymap = require('cmp.utils.keymap')
-local feedkeys = require('cmp.utils.feedkeys')
-local types = require('cmp.types')
-local config = require('cmp.config')
-local api = require('cmp.utils.api')
+local event = require 'cmp.utils.event'
+local autocmd = require 'cmp.utils.autocmd'
+local keymap = require 'cmp.utils.keymap'
+local feedkeys = require 'cmp.utils.feedkeys'
+local types = require 'cmp.types'
+local config = require 'cmp.config'
+local api = require 'cmp.utils.api'
 
 ---@class cmp.NativeEntriesView
 ---@field private offset integer
@@ -22,7 +22,7 @@ native_entries_view.new = function()
   self.entries = {}
   self.preselect_index = 0
   autocmd.subscribe('CompleteChanged', function()
-    self.event:emit('change')
+    self.event:emit 'change'
   end)
   return self
 end
@@ -118,7 +118,7 @@ end
 
 native_entries_view.select_next_item = function(self, option)
   local callback = function()
-    self.event:emit('change')
+    self.event:emit 'change'
   end
   if self:visible() then
     if (option.behavior or types.cmp.SelectBehavior.Insert) == types.cmp.SelectBehavior.Insert then
@@ -131,7 +131,7 @@ end
 
 native_entries_view.select_prev_item = function(self, option)
   local callback = function()
-    self.event:emit('change')
+    self.event:emit 'change'
   end
   if self:visible() then
     if (option.behavior or types.cmp.SelectBehavior.Insert) == types.cmp.SelectBehavior.Insert then

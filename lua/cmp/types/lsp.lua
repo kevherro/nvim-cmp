@@ -1,4 +1,4 @@
-local misc = require('cmp.utils.misc')
+local misc = require 'cmp.utils.misc'
 
 ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-current/
 ---@class lsp
@@ -66,7 +66,11 @@ lsp.Position = {
     end
 
     local ok, byteindex = pcall(function()
-      return vim.str_byteindex(text, position.character, from_encoding == lsp.PositionEncodingKind.UTF16)
+      return vim.str_byteindex(
+        text,
+        position.character,
+        from_encoding == lsp.PositionEncodingKind.UTF16
+      )
     end)
     if not ok then
       return position

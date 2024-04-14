@@ -1,13 +1,13 @@
-local spec = require('cmp.utils.spec')
+local spec = require 'cmp.utils.spec'
 
-local entry = require('cmp.entry')
+local entry = require 'cmp.entry'
 
 describe('entry', function()
   before_each(spec.before)
 
   it('one char', function()
     local state = spec.state('@.', 1, 3)
-    state.input('@')
+    state.input '@'
     local e = entry.new(state.manual(), state.source(), {
       label = '@',
     })
@@ -17,7 +17,7 @@ describe('entry', function()
 
   it('word length (no fix)', function()
     local state = spec.state('a.b', 1, 4)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = 'b',
     })
@@ -27,7 +27,7 @@ describe('entry', function()
 
   it('word length (fix)', function()
     local state = spec.state('a.b', 1, 4)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = 'b.',
     })
@@ -37,7 +37,7 @@ describe('entry', function()
 
   it('semantic index (no fix)', function()
     local state = spec.state('a.bc', 1, 5)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = 'c.',
     })
@@ -47,7 +47,7 @@ describe('entry', function()
 
   it('semantic index (fix)', function()
     local state = spec.state('a.bc', 1, 5)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = 'bc.',
     })
@@ -57,7 +57,7 @@ describe('entry', function()
 
   it('[vscode-html-language-server] 1', function()
     local state = spec.state('    </>', 1, 7)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = '/div',
       textEdit = {
@@ -82,7 +82,7 @@ describe('entry', function()
     --NOTE: clangd does not return `.foo` as filterText but we should care about it.
     --nvim-cmp does care it by special handling in entry.lua.
     local state = spec.state('foo', 1, 4)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       insertText = '->foo',
       label = ' foo',
@@ -106,7 +106,7 @@ describe('entry', function()
 
   it('[typescript-language-server] 1', function()
     local state = spec.state('Promise.resolve()', 1, 18)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       label = 'catch',
     })
@@ -117,7 +117,7 @@ describe('entry', function()
 
   it('[typescript-language-server] 2', function()
     local state = spec.state('Promise.resolve()', 1, 18)
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state.source(), {
       filterText = '.Symbol',
       label = 'Symbol',
@@ -144,7 +144,7 @@ describe('entry', function()
     local e
 
     -- press g
-    state.input('g')
+    state.input 'g'
     e = entry.new(state.manual(), state.source(), {
       insertTextFormat = 2,
       label = 'cmp.config',
@@ -166,7 +166,7 @@ describe('entry', function()
     assert.are.equal(e:get_filter_text(), 'cmp.config')
 
     -- press '
-    state.input("'")
+    state.input "'"
     e = entry.new(state.manual(), state.source(), {
       insertTextFormat = 2,
       label = 'cmp.config',
@@ -193,7 +193,7 @@ describe('entry', function()
     local e
 
     -- press g
-    state.input('g')
+    state.input 'g'
     e = entry.new(state.manual(), state.source(), {
       insertTextFormat = 2,
       label = 'lua.cmp.config',
@@ -215,7 +215,7 @@ describe('entry', function()
     assert.are.equal(e:get_filter_text(), 'lua.cmp.config')
 
     -- press '
-    state.input("'")
+    state.input "'"
     e = entry.new(state.manual(), state.source(), {
       insertTextFormat = 2,
       label = 'lua.cmp.config',
@@ -241,7 +241,7 @@ describe('entry', function()
     local state = spec.state('\t\t', 1, 4)
 
     -- press g
-    state.input('$')
+    state.input '$'
     local e = entry.new(state.manual(), state.source(), {
       kind = 6,
       label = '$this',
@@ -268,7 +268,7 @@ describe('entry', function()
     local state = spec.state('\t\t', 1, 4)
 
     -- press g
-    state.input('s')
+    state.input 's'
     local e = entry.new(state.manual(), state.source(), {
       additionalTextEdits = {},
       command = {
@@ -292,7 +292,7 @@ describe('entry', function()
     local state = spec.state('', 1, 1)
 
     -- press g
-    state.input('_')
+    state.input '_'
     local e = entry.new(state.manual(), state.source(), {
       kind = 6,
       label = '__init__',
@@ -339,7 +339,7 @@ describe('entry', function()
     local state = spec.state('jsonReader', 3, 11)
     local state_source = state.source()
 
-    state.input('.')
+    state.input '.'
     local e = entry.new(state.manual(), state_source, {
       filterText = 'getPath()',
       kind = 1,

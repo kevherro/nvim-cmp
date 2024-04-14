@@ -1,5 +1,5 @@
-local window = require('cmp.utils.window')
-local config = require('cmp.config')
+local window = require 'cmp.utils.window'
+local config = require 'cmp.config'
 
 ---@class cmp.DocsView
 ---@field public window cmp.Window
@@ -35,7 +35,7 @@ docs_view.open = function(self, e, view)
     return self:close()
   end
 
-  local border_info = window.get_border_info({ style = documentation })
+  local border_info = window.get_border_info { style = documentation }
   local right_space = vim.o.columns - (view.col + view.width) - 1
   local left_space = view.col - 1
   local max_width = math.max(left_space, right_space)
@@ -52,7 +52,7 @@ docs_view.open = function(self, e, view)
 
     self.entry = e
     vim.api.nvim_buf_call(self.window:get_buffer(), function()
-      vim.cmd([[syntax clear]])
+      vim.cmd [[syntax clear]]
       vim.api.nvim_buf_set_lines(self.window:get_buffer(), 0, -1, false, {})
     end)
     local opts = {
@@ -74,7 +74,10 @@ docs_view.open = function(self, e, view)
   if documentation.max_height > 0 then
     opts.max_height = documentation.max_height - border_info.vert
   end
-  local width, height = vim.lsp.util._make_floating_popup_size(vim.api.nvim_buf_get_lines(self.window:get_buffer(), 0, -1, false), opts)
+  local width, height = vim.lsp.util._make_floating_popup_size(
+    vim.api.nvim_buf_get_lines(self.window:get_buffer(), 0, -1, false),
+    opts
+  )
   if width <= 0 or height <= 0 then
     return self:close()
   end

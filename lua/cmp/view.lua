@@ -1,12 +1,12 @@
-local config = require('cmp.config')
-local async = require('cmp.utils.async')
-local event = require('cmp.utils.event')
-local keymap = require('cmp.utils.keymap')
-local docs_view = require('cmp.view.docs_view')
-local custom_entries_view = require('cmp.view.custom_entries_view')
-local wildmenu_entries_view = require('cmp.view.wildmenu_entries_view')
-local native_entries_view = require('cmp.view.native_entries_view')
-local ghost_text_view = require('cmp.view.ghost_text_view')
+local config = require 'cmp.config'
+local async = require 'cmp.utils.async'
+local event = require 'cmp.utils.event'
+local keymap = require 'cmp.utils.keymap'
+local docs_view = require 'cmp.view.docs_view'
+local custom_entries_view = require 'cmp.view.custom_entries_view'
+local wildmenu_entries_view = require 'cmp.view.wildmenu_entries_view'
+local native_entries_view = require 'cmp.view.native_entries_view'
+local ghost_text_view = require 'cmp.view.ghost_text_view'
 
 ---@class cmp.View
 ---@field public event cmp.Event
@@ -94,7 +94,8 @@ view.open = function(self, ctx, sources)
           end
 
           -- source order priority bonus.
-          local priority = s:get_source_config().priority or ((#source_group - (i - 1)) * config.get().sorting.priority_weight)
+          local priority = s:get_source_config().priority
+            or ((#source_group - (i - 1)) * config.get().sorting.priority_weight)
 
           for _, e in ipairs(s:get_entries(ctx)) do
             e.score = e.score + priority

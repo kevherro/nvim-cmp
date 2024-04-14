@@ -1,6 +1,6 @@
-local types = require('cmp.types')
-local misc = require('cmp.utils.misc')
-local keymap = require('cmp.utils.keymap')
+local types = require 'cmp.types'
+local misc = require 'cmp.utils.misc'
+local keymap = require 'cmp.utils.keymap'
 
 local function merge_keymaps(base, override)
   local normalized_base = {}
@@ -36,16 +36,16 @@ mapping.preset = {}
 mapping.preset.insert = function(override)
   return merge_keymaps(override or {}, {
     ['<Down>'] = {
-      i = mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Select }),
+      i = mapping.select_next_item { behavior = types.cmp.SelectBehavior.Select },
     },
     ['<Up>'] = {
-      i = mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Select }),
+      i = mapping.select_prev_item { behavior = types.cmp.SelectBehavior.Select },
     },
     ['<C-n>'] = {
       i = function()
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
-          cmp.select_next_item({ behavior = types.cmp.SelectBehavior.Insert })
+          cmp.select_next_item { behavior = types.cmp.SelectBehavior.Insert }
         else
           cmp.complete()
         end
@@ -53,16 +53,16 @@ mapping.preset.insert = function(override)
     },
     ['<C-p>'] = {
       i = function()
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
-          cmp.select_prev_item({ behavior = types.cmp.SelectBehavior.Insert })
+          cmp.select_prev_item { behavior = types.cmp.SelectBehavior.Insert }
         else
           cmp.complete()
         end
       end,
     },
     ['<C-y>'] = {
-      i = mapping.confirm({ select = false }),
+      i = mapping.confirm { select = false },
     },
     ['<C-e>'] = {
       i = mapping.abort(),
@@ -75,7 +75,7 @@ mapping.preset.cmdline = function(override)
   return merge_keymaps(override or {}, {
     ['<C-z>'] = {
       c = function()
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
           cmp.select_next_item()
         else
@@ -85,7 +85,7 @@ mapping.preset.cmdline = function(override)
     },
     ['<Tab>'] = {
       c = function()
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
           cmp.select_next_item()
         else
@@ -95,7 +95,7 @@ mapping.preset.cmdline = function(override)
     },
     ['<S-Tab>'] = {
       c = function()
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
           cmp.select_prev_item()
         else
@@ -105,7 +105,7 @@ mapping.preset.cmdline = function(override)
     },
     ['<C-n>'] = {
       c = function(fallback)
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
           cmp.select_next_item()
         else
@@ -115,7 +115,7 @@ mapping.preset.cmdline = function(override)
     },
     ['<C-p>'] = {
       c = function(fallback)
-        local cmp = require('cmp')
+        local cmp = require 'cmp'
         if cmp.visible() then
           cmp.select_prev_item()
         else
@@ -127,7 +127,7 @@ mapping.preset.cmdline = function(override)
       c = mapping.abort(),
     },
     ['<C-y>'] = {
-      c = mapping.confirm({ select = false }),
+      c = mapping.confirm { select = false },
     },
   })
 end

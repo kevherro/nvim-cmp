@@ -1,8 +1,8 @@
-local misc = require('cmp.utils.misc')
-local opt = require('cmp.utils.options')
-local buffer = require('cmp.utils.buffer')
-local api = require('cmp.utils.api')
-local config = require('cmp.config')
+local misc = require 'cmp.utils.misc'
+local opt = require 'cmp.utils.options'
+local buffer = require 'cmp.utils.buffer'
+local api = require 'cmp.utils.api'
+local config = require 'cmp.config'
 
 ---@class cmp.WindowStyle
 ---@field public relative string
@@ -27,7 +27,7 @@ local window = {}
 ---@return cmp.Window
 window.new = function()
   local self = setmetatable({}, { __index = window })
-  self.name = misc.id('cmp.utils.window.new')
+  self.name = misc.id 'cmp.utils.window.new'
   self.win = nil
   self.sbar_win = nil
   self.thumb_win = nil
@@ -113,20 +113,41 @@ window.open = function(self, style)
     self:set_style(style)
   end
 
-  if self.style.width < 1 or self.style.height < 1 then
-    return
-  end
+  -- Ensure minimum dimensions
+  self.style.width = math.max(self.style.width, 20) -- Set a minimum width
+  self.style.height = math.max(self.style.height, 10) -- Set a minimum height
 
+  -- Common configuration for all windows to match the main window size
+  local common_style = {
+    relative = 'editor',
+    row = 1, -- Default position row
+    col = 1, -- Default position column
+    width = self.style.width,
+    height = self.style.height,
+    style = 'minimal',
+    noautocmd = true,
+  }
+
+  -- Open or update the main window
   if self.win and vim.api.nvim_win_is_valid(self.win) then
     vim.api.nvim_win_set_config(self.win, self.style)
   else
-    local s = misc.copy(self.style)
-    s.noautocmd = true
-    self.win = vim.api.nvim_open_win(self:get_buffer(), false, s)
-    for k, v in pairs(self.opt) do
-      opt.win_set_option(self.win, k, v)
-    end
+    self.win = vim.api.nvim_open_win(self:get_buffer(), false, common_style)
   end
+
+  -- Apply the same width and height to scrollbar and thumb window
+  if self.sbar_win and vim.api.nvim_win_is_valid(self.sbar_win) then
+    vim.api.nvim_win_set_config(self.sbar_win, common_style)
+  else
+    self.sbar_win = vim.api.nvim_open_win(self:get_buffer(), false, common_style)
+  end
+
+  if self.thumb_win and vim.api.nvim_win_is_valid(self.thumb_win) then
+    vim.api.nvim_win_set_config(self.thumb_win, common_style)
+  else
+    self.thumb_win = vim.api.nvim_open_win(self:get_buffer(), false, common_style)
+  end
+
   self:update()
 end
 
@@ -151,13 +172,20 @@ window.update = function(self)
       else
         style.noautocmd = true
         self.sbar_win = vim.api.nvim_open_win(buffer.ensure(self.name .. 'sbar_buf'), false, style)
-        opt.win_set_option(self.sbar_win, 'winhighlight', 'EndOfBuffer:PmenuSbar,NormalFloat:PmenuSbar')
+        opt.win_set_option(
+          self.sbar_win,
+          'winhighlight',
+          'EndOfBuffer:PmenuSbar,NormalFloat:PmenuSbar'
+        )
       end
     end
 
     -- Draw the scrollbar thumb
-    local thumb_height = math.floor(info.inner_height * (info.inner_height / self:get_content_height()) + 0.5)
-    local thumb_offset = math.floor(info.inner_height * (vim.fn.getwininfo(self.win)[1].topline / self:get_content_height()))
+    local thumb_height =
+      math.floor(info.inner_height * (info.inner_height / self:get_content_height()) + 0.5)
+    local thumb_offset = math.floor(
+      info.inner_height * (vim.fn.getwininfo(self.win)[1].topline / self:get_content_height())
+    )
 
     local style = {
       relative = 'editor',
@@ -173,7 +201,11 @@ window.update = function(self)
     else
       style.noautocmd = true
       self.thumb_win = vim.api.nvim_open_win(buffer.ensure(self.name .. 'thumb_buf'), false, style)
-      opt.win_set_option(self.thumb_win, 'winhighlight', 'EndOfBuffer:PmenuThumb,NormalFloat:PmenuThumb')
+      opt.win_set_option(
+        self.thumb_win,
+        'winhighlight',
+        'EndOfBuffer:PmenuThumb,NormalFloat:PmenuThumb'
+      )
     end
   else
     if self.sbar_win and vim.api.nvim_win_is_valid(self.sbar_win) then
@@ -295,7 +327,12 @@ window.get_border_info = function(self)
   info.left = new_border[8] == '' and 0 or 1
   info.vert = info.top + info.bottom
   info.horiz = info.left + info.right
-  info.visible = not (vim.tbl_contains({ '', ' ' }, new_border[2]) and vim.tbl_contains({ '', ' ' }, new_border[4]) and vim.tbl_contains({ '', ' ' }, new_border[6]) and vim.tbl_contains({ '', ' ' }, new_border[8]))
+  info.visible = not (
+    vim.tbl_contains({ '', ' ' }, new_border[2])
+    and vim.tbl_contains({ '', ' ' }, new_border[4])
+    and vim.tbl_contains({ '', ' ' }, new_border[6])
+    and vim.tbl_contains({ '', ' ' }, new_border[8])
+  )
   return info
 end
 
@@ -303,7 +340,7 @@ end
 ---NOTE: The result of vim.fn.strdisplaywidth depends on the buffer it was called in (see comment in cmp.Entry.get_view).
 ---@return integer
 window.get_content_height = function(self)
-  if not self:option('wrap') then
+  if not self:option 'wrap' then
     return vim.api.nvim_buf_line_count(self:get_buffer())
   end
   local height = 0

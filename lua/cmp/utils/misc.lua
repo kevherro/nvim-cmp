@@ -238,9 +238,9 @@ misc.redraw = setmetatable({
     self.force = not not force
     vim.schedule(function()
       if self.force then
-        vim.cmd([[redraw!]])
+        vim.cmd [[redraw!]]
       else
-        vim.cmd([[redraw]])
+        vim.cmd [[redraw]]
       end
       self.doing = false
       self.force = false

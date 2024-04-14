@@ -1,4 +1,4 @@
-local debug = require('cmp.utils.debug')
+local debug = require 'cmp.utils.debug'
 
 local autocmd = {}
 
@@ -42,7 +42,7 @@ end
 ---Emit autocmd
 ---@param event string
 autocmd.emit = function(event)
-  debug.log(' ')
+  debug.log ' '
   debug.log(string.format('>>> %s', event))
   autocmd.events[event] = autocmd.events[event] or {}
   for _, callback in ipairs(autocmd.events[event]) do

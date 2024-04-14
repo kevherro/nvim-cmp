@@ -1,36 +1,36 @@
-local core = require('cmp.core')
-local source = require('cmp.source')
-local config = require('cmp.config')
-local feedkeys = require('cmp.utils.feedkeys')
-local autocmd = require('cmp.utils.autocmd')
-local keymap = require('cmp.utils.keymap')
-local misc = require('cmp.utils.misc')
-local async = require('cmp.utils.async')
+local core = require 'cmp.core'
+local source = require 'cmp.source'
+local config = require 'cmp.config'
+local feedkeys = require 'cmp.utils.feedkeys'
+local autocmd = require 'cmp.utils.autocmd'
+local keymap = require 'cmp.utils.keymap'
+local misc = require 'cmp.utils.misc'
+local async = require 'cmp.utils.async'
 
 local cmp = {}
 
 cmp.core = core.new()
 
 ---Expose types
-for k, v in pairs(require('cmp.types.cmp')) do
+for k, v in pairs(require 'cmp.types.cmp') do
   cmp[k] = v
 end
-cmp.lsp = require('cmp.types.lsp')
-cmp.vim = require('cmp.types.vim')
+cmp.lsp = require 'cmp.types.lsp'
+cmp.vim = require 'cmp.types.vim'
 
 ---Expose event
 cmp.event = cmp.core.event
 
 ---Export mapping for special case
-cmp.mapping = require('cmp.config.mapping')
+cmp.mapping = require 'cmp.config.mapping'
 
 ---Export default config presets
 cmp.config = {}
 cmp.config.disable = misc.none
-cmp.config.compare = require('cmp.config.compare')
-cmp.config.sources = require('cmp.config.sources')
-cmp.config.mapping = require('cmp.config.mapping')
-cmp.config.window = require('cmp.config.window')
+cmp.config.compare = require 'cmp.config.compare'
+cmp.config.sources = require 'cmp.config.sources'
+cmp.config.mapping = require 'cmp.config.mapping'
+cmp.config.window = require 'cmp.config.window'
 
 ---Sync asynchronous process.
 cmp.sync = function(callback)
@@ -74,7 +74,7 @@ end
 cmp.complete = cmp.sync(function(option)
   option = option or {}
   config.set_onetime(option.config)
-  cmp.core:complete(cmp.core:get_context({ reason = option.reason or cmp.ContextReason.Manual }))
+  cmp.core:complete(cmp.core:get_context { reason = option.reason or cmp.ContextReason.Manual })
   return true
 end)
 
@@ -210,7 +210,9 @@ end)
 cmp.confirm = cmp.sync(function(option, callback)
   option = option or {}
   option.select = option.select or false
-  option.behavior = option.behavior or cmp.get_config().confirmation.default_behavior or cmp.ConfirmBehavior.Insert
+  option.behavior = option.behavior
+    or cmp.get_config().confirmation.default_behavior
+    or cmp.ConfirmBehavior.Insert
   callback = callback or function() end
 
   if cmp.core.view:visible() then
@@ -223,7 +225,7 @@ cmp.confirm = cmp.sync(function(option, callback)
         behavior = option.behavior,
       }, function()
         callback()
-        cmp.core:complete(cmp.core:get_context({ reason = cmp.ContextReason.TriggerOnly }))
+        cmp.core:complete(cmp.core:get_context { reason = cmp.ContextReason.TriggerOnly })
       end)
       return true
     end
@@ -326,7 +328,7 @@ local on_insert_enter = function()
     cmp.config.compare.scopes:update()
     cmp.config.compare.locality:update()
     cmp.core:prepare()
-    cmp.core:on_change('InsertEnter')
+    cmp.core:on_change 'InsertEnter'
   end
 end
 autocmd.subscribe({ 'CmdlineEnter' }, async.debounce_next_tick(on_insert_enter))
@@ -335,7 +337,7 @@ autocmd.subscribe({ 'InsertEnter' }, async.debounce_next_tick_by_keymap(on_inser
 -- async.throttle is needed for performance. The mapping `:<C-u>...<CR>` will fire `CmdlineChanged` for each character.
 local on_text_changed = function()
   if config.enabled() then
-    cmp.core:on_change('TextChanged')
+    cmp.core:on_change 'TextChanged'
   end
 end
 autocmd.subscribe({ 'TextChangedI', 'TextChangedP' }, on_text_changed)
